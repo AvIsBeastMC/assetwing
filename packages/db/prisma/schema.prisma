@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(cuid())
+  name     String
+  email    String  @unique
+  password String  @default("user123")
+  image    String?
+  role     String // teacher | admin
+  issues   Issue[]
+}
+
+model Issue {
+  id          String    @id @default(uuid())
+  type        String    @default("review") // pending, resolved
+  updatedAt   DateTime? @default(now())
+  createdAt   DateTime? @updatedAt
+  subItem     SubItem   @relation(references: [id], fields: [subItemId])
+  asset       Asset     @relation(references: [id], fields: [assetId])
+  user        User      @relation(references: [id], fields: [userId])
+  title       String
+  description String    @db.Text
+
+  userId    String
+  assetId   String
+  subItemId String
+}
+
+model Image {
+  id          String   @id @default(cuid())
+  url         String
+  dateCreated DateTime @default(now())
+  asset       Asset    @relation(references: [id], fields: [assetId])
+
+  assetId String
+}
+
+model SubItem {
+  id                    String  @id @default(cuid())
+  asset                 Asset   @relation(references: [id], fields: [assetId])
+  name                  String
+  additionalInformation String? @db.Text
+  issues                Issue[]
+
+  assetId String
+}
+
+model Asset {
+  id           String    @id @default(cuid())
+  title        String
+  subItems     SubItem[]
+  description  String    @db.Text
+  dateModified DateTime? @updatedAt
+  issues       Issue[]
+  images       Image[]
+  quantity     Int?
+  value        Int?
+  category     String?
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  dateFrom    DateTime
+  dateTo      DateTime
+  description String   @db.Text
+  category    String
+}
