@@ -15,7 +15,7 @@ const Assets = () => {
   const router = useRouter()
   const [account, setAccount] = useAtom(authState)
   const { data: assets, error, refetch, isRefetching } = api.assets.getAssets.useQuery(undefined, {
-    refetchInterval: 30000
+    refetchInterval: 50000
   });
   const [search, setSearch] = useState<string>("")
   const searchThroughAssets = assets ? assets.filter((a) => a.title.includes(search)) : []
@@ -113,7 +113,9 @@ const Assets = () => {
               setItemForIssue(a.id)
               router.push("/issues/create")
             }} startIcon={<Ionicons name="warning" size={24} color="black" />} fontFamily="Inter">Raise an Issue for Sub-Item</Actionsheet.Item>
-            <Actionsheet.Item startIcon={<Ionicons name="link" size={24} color="black" />} fontFamily="Inter">View Issues</Actionsheet.Item>
+            <Actionsheet.Item onPress={() => {
+              router.push(`/issues/assets/${a.id}`)
+            }} startIcon={<Ionicons name="link" size={24} color="black" />} fontFamily="Inter">View Issues</Actionsheet.Item>
             <Actionsheet.Item startIcon={<Ionicons name="link" size={24} color="black" />} fontFamily="Inter">View Sub-Items</Actionsheet.Item>
             <Actionsheet.Item startIcon={<Ionicons name="pencil-outline" size={24} color="black" />} fontFamily="Inter" isDisabled={account?.role !== 'admin'}>
               <Text className='text-red-500 uppercase'>

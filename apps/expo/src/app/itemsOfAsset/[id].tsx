@@ -33,7 +33,9 @@ const ItemsOfAsset = () => {
 
   return (
     <SafeAreaView>
-      <Stack.Screen options={{ title: `${item ? item.title : "Loading..."}` }} />
+      <Stack.Screen options={{ title: `${item ? `Registered Items - ${item.title}` : "Loading..."}` }} />
+
+
     </SafeAreaView>
   )
 }

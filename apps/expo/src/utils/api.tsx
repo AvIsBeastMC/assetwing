@@ -31,7 +31,7 @@ const getBaseUrl = () => {
   const localhost = debuggerHost?.split(":")[0];
 
   if (!localhost) {
-    // return "https://your-production-url.com";
+    return "https://assetwing.arunnya.com";
     throw new Error(
       "Failed to get localhost. Please point to your production server.",
     );
