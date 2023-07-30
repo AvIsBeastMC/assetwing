@@ -3,6 +3,65 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
 export const adminRouter = createTRPCRouter({
+  deleteIssue: publicProcedure
+    .input(z.object({
+      account: z.string(),
+      id: z.string()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { account, id } = input;
+
+      const deleteIssue = await prisma.issue.delete({
+        where: {
+          id
+        }
+      })
+
+      return deleteIssue;
+    }),
+  resolveIssue: publicProcedure
+    .input(z.object({
+      account: z.string(),
+      id: z.string()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { account, id } = input;
+
+      const checkAccount = await prisma.user.findUnique({
+        where: {
+          id: account
+        }
+      })
+
+      if (!checkAccount || checkAccount?.role !== 'admin') throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "UNAUTHORIZED"
+      })
+
+      const checkIfIssueExists = await prisma.issue.findUnique({
+        where: {
+          id
+        }
+      })
+
+      if (!checkIfIssueExists) throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Issue with the given ID does not exist and hence, could NOT be updated."
+      })
+
+      const updateIssue = await prisma.issue.update({
+        where: {
+          id
+        },
+        data: {
+          type: "resolved"
+        }
+      })
+
+      return updateIssue;
+    }),
   overview: publicProcedure
     .input(z.object({
       id: z.string(),

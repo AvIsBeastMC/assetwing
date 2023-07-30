@@ -18,7 +18,7 @@ const Assets = () => {
     refetchInterval: 50000
   });
   const [search, setSearch] = useState<string>("")
-  const searchThroughAssets = assets ? assets.filter((a) => a.title.includes(search)) : []
+  const searchThroughAssets = assets ? assets.filter((a) => a.title.toLowerCase().includes(search.toLowerCase())) : []
   const [, setItemForIssue] = useAtom(createIssueItem);
 
   useEffect(() => {

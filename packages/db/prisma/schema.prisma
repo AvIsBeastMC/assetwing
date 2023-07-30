@@ -11,25 +11,38 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(cuid())
+  id       String    @id @default(cuid())
   name     String
-  email    String  @unique
-  password String  @default("user123")
+  email    String    @unique
+  password String    @default("user123")
   image    String?
   role     String // teacher | admin
   issues   Issue[]
+  comment  Comment[]
+}
+
+model Comment {
+  id      String   @id @default(cuid())
+  user    User     @relation(references: [id], fields: [userId])
+  content String   @db.Text
+  dated   DateTime @default(now())
+  issue   Issue    @relation(references: [id], fields: [issueId])
+
+  issueId String
+  userId  String
 }
 
 model Issue {
   id          String    @id @default(uuid())
-  type        String    @default("review") // pending, resolved
-  updatedAt   DateTime? @default(now())
+  type        String    @default("pending") // pending, resolved
   createdAt   DateTime? @updatedAt
+  updatedAt   DateTime? @default(now())
   subItem     SubItem   @relation(references: [id], fields: [subItemId])
   asset       Asset     @relation(references: [id], fields: [assetId])
   user        User      @relation(references: [id], fields: [userId])
   title       String
   description String    @db.Text
+  comments    Comment[]
 
   userId    String
   assetId   String

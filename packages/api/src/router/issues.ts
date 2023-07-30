@@ -1,7 +1,37 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
 export const issuesRouter = createTRPCRouter({
+  getIssue: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const id = input;
+
+      const query = await prisma.issue.findUnique({
+        where: {
+          id
+        },
+        include: {
+          comments: true,
+          user: true,
+          asset: {
+            include: {
+              images: true
+            }
+          },
+          subItem: true
+        }
+      })
+
+      if (!query) throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "No Such Issue exists with the provided ID"
+      })
+
+      return query;
+    }),
   getAllIssues: publicProcedure
     .query(async ({ ctx }) => {
       const { prisma } = ctx;

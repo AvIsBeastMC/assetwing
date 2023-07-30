@@ -1,8 +1,8 @@
 import type { ExpoConfig } from "@expo/config";
 
 const defineConfig = (): ExpoConfig => ({
-  name: "School Management",
-  slug: "School Management",
+  name: "AssetWing",
+  slug: "assetwing",
   scheme: "expo",
   version: "1.0.0",
   orientation: "portrait",
@@ -22,14 +22,15 @@ const defineConfig = (): ExpoConfig => ({
     bundleIdentifier: "your.bundle.identifier",
   },
   android: {
+    package: "com.arunnya.assetwing",
     adaptiveIcon: {
       foregroundImage: "./assets/icon.png",
-      backgroundColor: "#000000",
+      backgroundColor: "#FFFFFF",
     },
   },
   extra: {
     eas: {
-      // projectId: "your-project-id",
+      projectId: "778b9ac3-1313-467f-bf99-122d011193ad",
     },
   },
   experiments: {
