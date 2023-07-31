@@ -59,6 +59,9 @@ importers:
       expo-constants:
         specifier: ~14.4.2
         version: 14.4.2(expo@49.0.3)
+      expo-image-picker:
+        specifier: ~14.3.2
+        version: 14.3.2(expo@49.0.3)
       expo-linking:
         specifier: ~5.0.2
         version: 5.0.2(expo@49.0.3)
@@ -6930,6 +6933,23 @@ packages:
       react-native: 0.72.3(@babel/core@7.22.9)(@babel/preset-env@7.22.9)(react@18.2.0)
     transitivePeerDependencies:
       - react-dom
+    dev: false
+
+  /expo-image-loader@4.3.0(expo@49.0.3):
+    resolution: {integrity: sha512-2kqJIO+oYM8J3GbvTUHLqTSpt1dLpOn/X0eB4U4RTuzz/faj8l/TyQELsMBLlGAkweNUuG9LqznbaBz+WuSFEw==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.3(@babel/core@7.22.9)
+    dev: false
+
+  /expo-image-picker@14.3.2(expo@49.0.3):
+    resolution: {integrity: sha512-xr/YeQMIYheXecWP033F2SPwpBlBR5xVCx7YSfSCTH8Y9pw7Z886agqKGbS9QBVGlzJ5qecJktZ6ASSzeslDVg==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 49.0.3(@babel/core@7.22.9)
+      expo-image-loader: 4.3.0(expo@49.0.3)
     dev: false
 
   /expo-keep-awake@12.3.0(expo@49.0.3):

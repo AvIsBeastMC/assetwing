@@ -3,6 +3,148 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
 export const adminRouter = createTRPCRouter({
+  updateIssue: publicProcedure
+    .input(z.object({
+      id: z.string(),
+      account: z.string(),
+      title: z.string(),
+      description: z.string()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { id, account, title, description } = input;
+
+      const checkAccount = await prisma.user.findUnique({
+        where: {
+          id: account
+        }
+      })
+
+      if (!checkAccount || checkAccount?.role !== 'admin') throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "UNAUTHORIZED"
+      })
+
+      const update = await prisma.issue.update({
+        where: {
+          id
+        },
+        data: {
+          title, description
+        }
+      })
+
+      return update;
+    }),
+  deleteAsset: publicProcedure
+    .input(z.object({
+      id: z.string(),
+      account: z.string()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { id, account } = input;
+
+      const checkAccount = await prisma.user.findUnique({
+        where: {
+          id: account
+        }
+      })
+
+      if (!checkAccount || checkAccount?.role !== 'admin') throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "UNAUTHORIZED"
+      })
+
+      const query = await prisma.asset.delete({
+        where: {
+          id
+        }
+      })
+
+      return query;
+    }),
+  createSubItem: publicProcedure
+    .input(z.object({
+      asset: z.string(),
+      account: z.string(),
+      name: z.string(),
+      additionalInformation: z.string()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { asset, account, name, additionalInformation } = input;
+
+      const checkAccount = await prisma.user.findUnique({
+        where: {
+          id: account
+        }
+      })
+
+      if (!checkAccount || checkAccount?.role !== 'admin') throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "UNAUTHORIZED"
+      })
+
+      const checkAsset = await prisma.asset.findUnique({
+        where: {
+          id: asset
+        }
+      })
+
+      if (!checkAsset) throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Asset with the given ID does not exist!"
+      })
+
+      const createSubItemUnderAsset = await prisma.asset.update({
+        where: {
+          id: asset
+        },
+        data: {
+          subItems: {
+            create: {
+              name,
+              additionalInformation
+            }
+          }
+        }
+      })
+
+      return createSubItemUnderAsset;
+    }),
+  createAsset: publicProcedure
+    .input(z.object({
+      account: z.string(),
+      title: z.string(),
+      description: z.string(),
+      mentionedQuantity: z.number()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { account, title, description, mentionedQuantity } = input;
+
+      const checkAccount = await prisma.user.findUnique({
+        where: {
+          id: account
+        }
+      })
+
+      if (!checkAccount || checkAccount?.role !== 'admin') throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "UNAUTHORIZED"
+      })
+
+      const createAsset = await prisma.asset.create({
+        data: {
+          title,
+          description,
+          quantity: mentionedQuantity
+        }
+      })
+
+      return createAsset;
+    }),
   deleteIssue: publicProcedure
     .input(z.object({
       account: z.string(),
@@ -11,6 +153,17 @@ export const adminRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const { account, id } = input;
+
+      const checkAccount = await prisma.user.findUnique({
+        where: {
+          id: account
+        }
+      })
+
+      if (!checkAccount || checkAccount?.role !== 'admin') throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "UNAUTHORIZED"
+      })
 
       const deleteIssue = await prisma.issue.delete({
         where: {

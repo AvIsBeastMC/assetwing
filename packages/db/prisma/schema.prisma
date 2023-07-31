@@ -60,7 +60,7 @@ model Image {
 
 model SubItem {
   id                    String  @id @default(cuid())
-  asset                 Asset   @relation(references: [id], fields: [assetId])
+  asset                 Asset   @relation(references: [id], fields: [assetId], onDelete: Cascade)
   name                  String
   additionalInformation String? @db.Text
   issues                Issue[]

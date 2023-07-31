@@ -3,6 +3,43 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
 export const assetsRouter = createTRPCRouter({
+  getIssuesOfAsset: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const id = input;
+
+      const query = await prisma.issue.findMany({
+        where: {
+          assetId: id
+        },
+        include: {
+          subItem: true,
+          asset: {
+            include: {
+              images: true
+            }
+          },
+          user: true
+        }
+      })
+
+      const asset = await prisma.asset.findUnique({
+        where: {
+          id
+        }
+      })
+
+      if (!asset) throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "No Such Asset with the Given ID was found"
+      })
+
+      return {
+        issues: query,
+        asset
+      }
+    }),
   getSubItem: publicProcedure
     .input(z.string().nullable())
     .query(async ({ ctx, input: id }) => {
@@ -34,11 +71,11 @@ export const assetsRouter = createTRPCRouter({
       return subItem;
     }),
   getAsset: publicProcedure
-    .input(z.string().nullable())
+    .input(z.string().optional().nullable())
     .query(async ({ ctx, input: id }) => {
       const { prisma } = ctx;
 
-      if (!id) return undefined;
+      if (!id || id == 'none') return undefined;
 
       const query = await prisma.asset.findUnique({
         where: {

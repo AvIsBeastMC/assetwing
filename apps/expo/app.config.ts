@@ -36,7 +36,7 @@ const defineConfig = (): ExpoConfig => ({
   experiments: {
     tsconfigPaths: true,
   },
-  plugins: ["./expo-plugins/with-modify-gradle.js"],
+  plugins: ["./expo-plugins/with-modify-gradle.js", 'expo-image-picker'],
 });
 
 export default defineConfig;

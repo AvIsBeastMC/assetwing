@@ -41,6 +41,23 @@ const Assets = () => {
 
   const AssetComponent = ({ a, i }: { i: number, a: Exclude<typeof assets, undefined>[number] }) => {
     const [open, setOpen] = useState<boolean>(false);
+    const { mutate: deleteAssetMutate, isLoading } = api.admin.deleteAsset.useMutation()
+
+    const deleteAsset = () => {
+      if (account?.role !== 'admin') return;
+
+      deleteAssetMutate({
+        account: account.id,
+        id: a.id
+      }, {
+        onSuccess(data) {
+          refetch()
+        },
+        onError(data) {
+          alert('An Error Occurred!')
+        }
+      })
+    }
 
     return (
       <TouchableOpacity className={`${i > 0 ? "my-4" : ""}`} onLongPress={() => setOpen(true)} onPress={() => router.push(`/assets/${a.id}`)} style={{
@@ -105,7 +122,7 @@ const Assets = () => {
             </HStack>
           </NativeStack>
         </Box>
-
+        <Toast />
         <Actionsheet isOpen={open} onClose={() => setOpen(false)}>
           <Actionsheet.Content>
             <Actionsheet.Item startIcon={<Ionicons name="share" size={24} color="black" />} isDisabled>Share Link // feature under works</Actionsheet.Item>
@@ -117,9 +134,14 @@ const Assets = () => {
               router.push(`/issues/assets/${a.id}`)
             }} startIcon={<Ionicons name="link" size={24} color="black" />} fontFamily="Inter">View Issues</Actionsheet.Item>
             <Actionsheet.Item startIcon={<Ionicons name="link" size={24} color="black" />} fontFamily="Inter">View Sub-Items</Actionsheet.Item>
-            <Actionsheet.Item startIcon={<Ionicons name="pencil-outline" size={24} color="black" />} fontFamily="Inter" isDisabled={account?.role !== 'admin'}>
-              <Text className='text-red-500 uppercase'>
-                Modify Data
+            <Actionsheet.Item onPress={() => router.push(`/admin/createSubItem/${a.id}`)} startIcon={<Ionicons name="add-circle" size={24} color="black" />} isDisabled={account?.role !== 'admin'}>
+              <Text color="red.600" fontFamily="Inter">
+                Register Item under Asset [ADMIN ONLY]
+              </Text>
+            </Actionsheet.Item>
+            <Actionsheet.Item onPress={deleteAsset} isDisabled={account?.role !== 'admin'} isLoading={isLoading} isLoadingText='Deleting asset...' startIcon={<Ionicons name="trash" size={24} color="black" />}>
+              <Text color="red.600" fontFamily="Inter">
+                Delete Assets (& Sub-Items) [ADMIN ONLY]
               </Text>
             </Actionsheet.Item>
             {/* <Actionsheet.Item>Cancel</Actionsheet.Item> */}
@@ -131,7 +153,17 @@ const Assets = () => {
 
   return (
     <SafeAreaView>
-      <Stack.Screen options={{ title: "📚 Assets" }} />
+      <Stack.Screen options={{
+        headerRight: () => (
+          <>
+            {account?.role == 'admin' && (
+              <TouchableOpacity onPress={() => router.push("/admin/createAsset")}>
+                <Ionicons name="add" size={30} />
+              </TouchableOpacity>
+            )}
+          </>
+        ), title: "📚 Assets"
+      }} />
 
       {!assets ? <ActivityIndicator size={30} color="gray" /> : (
         <ScrollView refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}>
@@ -140,7 +172,7 @@ const Assets = () => {
               setTimeout(() => {
                 !searchThroughAssets.length ? refetch() : null
               }, 2000);
-            }} onChangeText={(search) => setSearch(search)} placeholder="Search through Assets and Hit Done/Enter on Keyboard!" width="100%" borderRadius="4" fontSize="14" size="8" color="gray.400" onSubmitEditing={() => alert('asd')} />
+            }} onChangeText={(search) => setSearch(search)} placeholder="Search through Assets" width="100%" borderRadius="4" fontSize="14" size="8" color="gray.400" onSubmitEditing={() => alert('asd')} />
           </VStack>
           {searchThroughAssets.map((a, i) => (
             <AssetComponent i={i} key={i} a={a} />

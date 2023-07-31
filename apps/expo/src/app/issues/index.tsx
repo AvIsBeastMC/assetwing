@@ -92,12 +92,12 @@ const Issues = () => {
                 uri: a.images[0]?.url
               }} alt="image" />
             </AspectRatio>
-            <Center bg={i.type == 'review' ? "red.600" : "yellow.600"} _text={{
+            <Center bg={i.type == 'pending' ? "red.600" : "yellow.600"} _text={{
               color: "warmGray.50",
               fontWeight: "700",
               fontSize: "xs"
             }} position="absolute" bottom="0" px="3" py="1.5">
-              {i.type == 'review' ? "Under Review" : "Resolved!"}
+              {i.type == 'pending' ? "Under Review" : "Resolved!"}
             </Center>
           </Box>
           <NativeStack p="4" space={3}>

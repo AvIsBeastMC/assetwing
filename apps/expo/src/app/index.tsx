@@ -151,20 +151,17 @@ const Index = () => {
           <NativeStack mb="1" mt="5" direction={{
             base: "row",
             md: "row"
-          }} space={2} mx={{
+          }} mx={{
             base: "auto",
             md: "0"
           }}>
             {!account && <Button isLoading={isLoading} isLoadingText={isLoading ? "Logging you in..." : undefined} onPress={() => setModalVisible(true)} size="sm" variant="subtle" colorScheme="darkBlue">
               <Text fontFamily="Inter" fontSize={12}>🔐 Login Now</Text>
             </Button>}
-            {account && <Button onPress={() => null} size="sm" variant="subtle" colorScheme="darkBlue">
-              <Text fontFamily="Inter" fontSize={12}>💻 Dashboard</Text>
-            </Button>}
-            {account && <Button onPress={() => router.push("/issues")} size="sm" variant="outline" colorScheme="darkBlue">
+            {account && <Button onPress={() => router.push("/issues")} size="sm" className="w-1/2" variant="outline" colorScheme="darkBlue">
               <Text fontFamily="Inter" fontSize={12}>⚠ All Issues</Text>
             </Button>}
-            <Button onPress={() => router.push("/assets")} size="sm" variant="subtle" colorScheme="secondary">
+            <Button onPress={() => router.push("/assets")} size="sm" variant="subtle" className="w-1/2" colorScheme="secondary">
               <Text fontFamily="Inter" fontSize={12}>📚 All Assets</Text>
             </Button>
           </NativeStack>
@@ -222,7 +219,7 @@ const Index = () => {
           </Modal.Footer>
         </Modal.Content>
       </Modal>
-    </SafeAreaView>
+    </SafeAreaView >
   );
 };
 
