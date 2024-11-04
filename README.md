@@ -1,5 +1,4 @@
 # NOTE 
-_______
 
 Password for Admin and Non Admin: user123
 
